@@ -51,11 +51,23 @@ func (s *Store) Confirm(reservationID string) error {
 // INVARIANT: never let stock go below zero.
 // ErrProductNotFound if the product doesn't exist; ErrOutOfStock if not enough stock.
 func (s *Store) Reserve(productID string, qty int) (*Reservation, error) {
-	r := s.products [productID]
+	// TODO: implement
+	r := s.products[productID]
 	if r == nil {
 		return nil, ErrProductNotFound
 	}
-	return nil, errors.New("TODO: Reserve")
+	if (r.Stock < qty) {
+		return nil, ErrOutOfStock
+	}
+	r.Stock -= qty
+	id := s.nextID()
+
+	res := &Reservation {
+		ID: id,
+		ProductID: productID,
+		Quantity: qty,
+	}
+	return res, nil
 }
 
 // Cancel releases a Held reservation and RETURNS its quantity to the product's stock.
